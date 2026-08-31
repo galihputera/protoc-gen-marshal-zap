@@ -5,6 +5,12 @@ option go_package = "github.com/kei2100/protoc-gen-marshal-zap/test/types;types"
 
 import "marshal-zap.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 message Types {
   string secret_val = 1 [(marshal_zap.mask) = true];
@@ -78,6 +84,35 @@ message Types {
   // TODO wellknown types
   // https://developers.google.com/protocol-buffers/docs/reference/google.protobuf
   google.protobuf.Struct struct_val = 31;
+
+  // Well-known types
+  google.protobuf.Timestamp timestamp_val = 42;
+  google.protobuf.Duration duration_val = 43;
+  google.protobuf.Any any_val = 44;
+  google.protobuf.FieldMask field_mask_val = 45;
+  google.protobuf.Empty empty_val = 46;
+  google.protobuf.Value value_val = 47;
+  google.protobuf.ListValue list_value_val = 48;
+  
+  // Wrapper types
+  google.protobuf.BoolValue bool_wrapper_val = 49;
+  google.protobuf.StringValue string_wrapper_val = 50;
+  google.protobuf.BytesValue bytes_wrapper_val = 51;
+  google.protobuf.Int32Value int32_wrapper_val = 52;
+  google.protobuf.Int64Value int64_wrapper_val = 53;
+  google.protobuf.UInt32Value uint32_wrapper_val = 54;
+  google.protobuf.UInt64Value uint64_wrapper_val = 55;
+  google.protobuf.FloatValue float_wrapper_val = 56;
+  google.protobuf.DoubleValue double_wrapper_val = 57;
+  
+  // Repeated well-known types
+  repeated google.protobuf.Timestamp repeated_timestamp_val = 58;
+  repeated google.protobuf.Duration repeated_duration_val = 59;
+  repeated google.protobuf.StringValue repeated_string_wrapper_val = 60;
+  
+  // Map with well-known type values
+  map<string, google.protobuf.Timestamp> map_timestamp_val = 61;
+  map<string, google.protobuf.StringValue> map_string_wrapper_val = 62;
 
   // Camelcasing
   string _String = 32;
