@@ -191,7 +191,7 @@ func generateListWellKnownOrMessage(g *protogen.GeneratedFile, f *protogen.Field
 		g.P("enc.AppendReflected(nil)")
 		g.P("}")
 	case wktStruct, wktValue, wktListValue, wktAny:
-		// Use AddReflected for complex types
+		// Use AppendReflected for complex types (handles nil automatically)
 		g.P("enc.AppendReflected(v)")
 	case wktFieldMask:
 		// FieldMask -> comma-separated paths
@@ -306,6 +306,7 @@ func generateMapField(g *protogen.GeneratedFile, f *protogen.Field) {
 
 // generateMapWellKnownOrMessage generates map value encoding for message kinds,
 // handling well-known types with their JSON representation
+// Note: nil values are skipped to be consistent with message field behavior
 func generateMapWellKnownOrMessage(g *protogen.GeneratedFile, f *protogen.Field) {
 	wkt := getWellKnownTypeFromMapValue(f)
 	keyFmt := g.QualifiedGoIdent(fmtPkg.Ident("Sprintf")) + "(\"%v\", k)"
@@ -314,89 +315,71 @@ func generateMapWellKnownOrMessage(g *protogen.GeneratedFile, f *protogen.Field)
 		// Timestamp -> RFC 3339 string
 		g.P("if v != nil {")
 		g.P("enc.AddString(", keyFmt, ", v.AsTime().Format(\"2006-01-02T15:04:05.999999999Z07:00\"))")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktDuration:
 		// Duration -> string like "1.5s"
 		g.P("if v != nil {")
 		g.P("enc.AddString(", keyFmt, ", v.AsDuration().String())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktStruct, wktValue, wktListValue, wktAny:
-		// Use AddReflected for complex types
+		// Use AddReflected for complex types, skip nil
+		g.P("if v != nil {")
 		g.P("enc.AddReflected(", keyFmt, ", v)")
+		g.P("}")
 	case wktFieldMask:
 		// FieldMask -> comma-separated paths
 		g.P("if v != nil {")
 		g.P("enc.AddString(", keyFmt, ", ", g.QualifiedGoIdent(stringsPkg.Ident("Join")), "(v.GetPaths(), \",\"))")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktEmpty:
-		// Empty -> empty object representation
+		// Empty -> empty object representation, skip nil
+		g.P("if v != nil {")
 		g.P("enc.AddReflected(", keyFmt, ", struct{}{})")
+		g.P("}")
 	case wktBoolValue:
 		g.P("if v != nil {")
 		g.P("enc.AddBool(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktStringValue:
 		g.P("if v != nil {")
 		g.P("enc.AddString(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktBytesValue:
 		g.P("if v != nil {")
 		g.P("enc.AddBinary(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktInt32Value:
 		g.P("if v != nil {")
 		g.P("enc.AddInt32(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktInt64Value:
 		g.P("if v != nil {")
 		g.P("enc.AddInt64(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktUInt32Value:
 		g.P("if v != nil {")
 		g.P("enc.AddUint32(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktUInt64Value:
 		g.P("if v != nil {")
 		g.P("enc.AddUint64(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktFloatValue:
 		g.P("if v != nil {")
 		g.P("enc.AddFloat32(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	case wktDoubleValue:
 		g.P("if v != nil {")
 		g.P("enc.AddFloat64(", keyFmt, ", v.GetValue())")
-		g.P("} else {")
-		g.P("enc.AddReflected(", keyFmt, ", nil)")
 		g.P("}")
 	default:
-		// Regular message - check for ObjectMarshaler interface
+		// Regular message - check for ObjectMarshaler interface, skip nil
+		g.P("if v != nil {")
 		g.P("if obj, ok := interface{}(v).(", g.QualifiedGoIdent(zapcorePkg.Ident("ObjectMarshaler")), "); ok {")
 		g.P("enc.AddObject(", keyFmt, ", obj)")
 		g.P("} else {")
 		g.P("enc.AddReflected(", keyFmt, ", v)")
+		g.P("}")
 		g.P("}")
 	}
 }

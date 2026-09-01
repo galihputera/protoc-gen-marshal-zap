@@ -6,8 +6,9 @@ package types
 
 import (
 	fmt "fmt"
-	zapcore "go.uber.org/zap/zapcore"
 	strings "strings"
+
+	zapcore "go.uber.org/zap/zapcore"
 )
 
 func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
