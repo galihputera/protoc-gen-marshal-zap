@@ -153,15 +153,11 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	}
 
 	if x.TimestampVal != nil {
-		if x.TimestampVal != nil {
-			enc.AddString("timestamp_val", x.TimestampVal.AsTime().Format("2006-01-02T15:04:05.999999999Z07:00"))
-		}
+		enc.AddString("timestamp_val", x.TimestampVal.AsTime().Format("2006-01-02T15:04:05.999999999Z07:00"))
 	}
 
 	if x.DurationVal != nil {
-		if x.DurationVal != nil {
-			enc.AddString("duration_val", x.DurationVal.AsDuration().String())
-		}
+		enc.AddString("duration_val", x.DurationVal.AsDuration().String())
 	}
 
 	if x.AnyVal != nil {
@@ -169,15 +165,11 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	}
 
 	if x.FieldMaskVal != nil {
-		if x.FieldMaskVal != nil {
-			enc.AddString("field_mask_val", strings.Join(x.FieldMaskVal.GetPaths(), ","))
-		}
+		enc.AddString("field_mask_val", strings.Join(x.FieldMaskVal.GetPaths(), ","))
 	}
 
 	if x.EmptyVal != nil {
-		if x.EmptyVal != nil {
-			enc.AddReflected("empty_val", struct{}{})
-		}
+		enc.AddReflected("empty_val", struct{}{})
 	}
 
 	if x.ValueVal != nil {
@@ -189,57 +181,39 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	}
 
 	if x.BoolWrapperVal != nil {
-		if x.BoolWrapperVal != nil {
-			enc.AddBool("bool_wrapper_val", x.BoolWrapperVal.GetValue())
-		}
+		enc.AddBool("bool_wrapper_val", x.BoolWrapperVal.GetValue())
 	}
 
 	if x.StringWrapperVal != nil {
-		if x.StringWrapperVal != nil {
-			enc.AddString("string_wrapper_val", x.StringWrapperVal.GetValue())
-		}
+		enc.AddString("string_wrapper_val", x.StringWrapperVal.GetValue())
 	}
 
 	if x.BytesWrapperVal != nil {
-		if x.BytesWrapperVal != nil {
-			enc.AddBinary("bytes_wrapper_val", x.BytesWrapperVal.GetValue())
-		}
+		enc.AddBinary("bytes_wrapper_val", x.BytesWrapperVal.GetValue())
 	}
 
 	if x.Int32WrapperVal != nil {
-		if x.Int32WrapperVal != nil {
-			enc.AddInt32("int32_wrapper_val", x.Int32WrapperVal.GetValue())
-		}
+		enc.AddInt32("int32_wrapper_val", x.Int32WrapperVal.GetValue())
 	}
 
 	if x.Int64WrapperVal != nil {
-		if x.Int64WrapperVal != nil {
-			enc.AddInt64("int64_wrapper_val", x.Int64WrapperVal.GetValue())
-		}
+		enc.AddInt64("int64_wrapper_val", x.Int64WrapperVal.GetValue())
 	}
 
 	if x.Uint32WrapperVal != nil {
-		if x.Uint32WrapperVal != nil {
-			enc.AddUint32("uint32_wrapper_val", x.Uint32WrapperVal.GetValue())
-		}
+		enc.AddUint32("uint32_wrapper_val", x.Uint32WrapperVal.GetValue())
 	}
 
 	if x.Uint64WrapperVal != nil {
-		if x.Uint64WrapperVal != nil {
-			enc.AddUint64("uint64_wrapper_val", x.Uint64WrapperVal.GetValue())
-		}
+		enc.AddUint64("uint64_wrapper_val", x.Uint64WrapperVal.GetValue())
 	}
 
 	if x.FloatWrapperVal != nil {
-		if x.FloatWrapperVal != nil {
-			enc.AddFloat32("float_wrapper_val", x.FloatWrapperVal.GetValue())
-		}
+		enc.AddFloat32("float_wrapper_val", x.FloatWrapperVal.GetValue())
 	}
 
 	if x.DoubleWrapperVal != nil {
-		if x.DoubleWrapperVal != nil {
-			enc.AddFloat64("double_wrapper_val", x.DoubleWrapperVal.GetValue())
-		}
+		enc.AddFloat64("double_wrapper_val", x.DoubleWrapperVal.GetValue())
 	}
 
 	repeated_timestamp_valArrMarshaller := func(enc zapcore.ArrayEncoder) error {

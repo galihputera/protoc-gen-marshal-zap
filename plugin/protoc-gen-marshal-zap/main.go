@@ -441,68 +441,43 @@ func generatePrimitiveField(g *protogen.GeneratedFile, f *protogen.Field) {
 
 // generatePrimitiveWellKnownOrMessage generates field encoding for message kinds,
 // handling well-known types with their JSON representation
+// Note: nil check is already handled by handleExplicitPresence, so we don't need it here
 func generatePrimitiveWellKnownOrMessage(g *protogen.GeneratedFile, f *protogen.Field, fname protoreflect.Name, gname string) {
 	wkt := getWellKnownType(f)
 	switch wkt {
 	case wktTimestamp:
 		// Timestamp -> RFC 3339 string
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddString(\"", fname, "\", x.", gname, ".AsTime().Format(\"2006-01-02T15:04:05.999999999Z07:00\"))")
-		g.P("}")
 	case wktDuration:
 		// Duration -> string like "1.5s"
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddString(\"", fname, "\", x.", gname, ".AsDuration().String())")
-		g.P("}")
 	case wktStruct, wktValue, wktListValue, wktAny:
 		// Use AddReflected for complex types
 		g.P("enc.AddReflected(\"", fname, "\", x.", gname, ")")
 	case wktFieldMask:
 		// FieldMask -> comma-separated paths
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddString(\"", fname, "\", ", g.QualifiedGoIdent(stringsPkg.Ident("Join")), "(x.", gname, ".GetPaths(), \",\"))")
-		g.P("}")
 	case wktEmpty:
 		// Empty -> empty object representation
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddReflected(\"", fname, "\", struct{}{})")
-		g.P("}")
 	case wktBoolValue:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddBool(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktStringValue:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddString(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktBytesValue:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddBinary(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktInt32Value:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddInt32(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktInt64Value:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddInt64(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktUInt32Value:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddUint32(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktUInt64Value:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddUint64(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktFloatValue:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddFloat32(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	case wktDoubleValue:
-		g.P("if x.", gname, " != nil {")
 		g.P("enc.AddFloat64(\"", fname, "\", x.", gname, ".GetValue())")
-		g.P("}")
 	default:
 		// Regular message - check for ObjectMarshaler interface
 		g.P("if obj, ok := interface{}(x.", gname, ").(", g.QualifiedGoIdent(zapcorePkg.Ident("ObjectMarshaler")), "); ok {")
