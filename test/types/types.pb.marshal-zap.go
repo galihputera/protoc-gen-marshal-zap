@@ -6,9 +6,8 @@ package types
 
 import (
 	fmt "fmt"
-	strings "strings"
-
 	zapcore "go.uber.org/zap/zapcore"
+	strings "strings"
 )
 
 func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
@@ -97,10 +96,12 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 
 	enc.AddObject("map_val2", zapcore.ObjectMarshalerFunc(func(enc zapcore.ObjectEncoder) error {
 		for k, v := range x.MapVal2 {
-			if obj, ok := interface{}(v).(zapcore.ObjectMarshaler); ok {
-				enc.AddObject(fmt.Sprintf("%v", k), obj)
-			} else {
-				enc.AddReflected(fmt.Sprintf("%v", k), v)
+			if v != nil {
+				if obj, ok := interface{}(v).(zapcore.ObjectMarshaler); ok {
+					enc.AddObject(fmt.Sprintf("%v", k), obj)
+				} else {
+					enc.AddReflected(fmt.Sprintf("%v", k), v)
+				}
 			}
 		}
 		return nil
@@ -257,8 +258,6 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 		for k, v := range x.MapTimestampVal {
 			if v != nil {
 				enc.AddString(fmt.Sprintf("%v", k), v.AsTime().Format("2006-01-02T15:04:05.999999999Z07:00"))
-			} else {
-				enc.AddReflected(fmt.Sprintf("%v", k), nil)
 			}
 		}
 		return nil
@@ -268,8 +267,6 @@ func (x *Types) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 		for k, v := range x.MapStringWrapperVal {
 			if v != nil {
 				enc.AddString(fmt.Sprintf("%v", k), v.GetValue())
-			} else {
-				enc.AddReflected(fmt.Sprintf("%v", k), nil)
 			}
 		}
 		return nil
